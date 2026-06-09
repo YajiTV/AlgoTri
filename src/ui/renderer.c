@@ -93,9 +93,11 @@ static void draw_stats(const SortContext *ctx, int row, int cols)
              ctx->comparisons, ctx->swaps);
 }
 
-static void draw_controls(int row, int cols)
+static void draw_controls(const SortContext *ctx, int row, int cols)
 {
-    const char *hint = "Q : quitter";
+    const char *hint = ctx->paused
+        ? "En pause   Espace : reprendre   Q : menu"
+        : "Espace : pause   Q : menu";
     int x = (cols - (int)strlen(hint)) / 2;
     if (x < 0) x = 0;
 
@@ -173,7 +175,7 @@ void renderer_draw(const SortContext *ctx)
     draw_bars(ctx, bar_top, bar_bot, cols);
 
     draw_stats(ctx, rows - 4, cols);
-    draw_controls(rows - 1, cols);
+    draw_controls(ctx, rows - 1, cols);
 
     refresh();
 }

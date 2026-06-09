@@ -7,6 +7,7 @@
 typedef struct SortContext SortContext;
 
 typedef void (*RenderFn)(const SortContext *ctx);
+typedef bool (*ControlFn)(SortContext *ctx);
 
 struct SortContext {
     int          *values;
@@ -19,6 +20,7 @@ struct SortContext {
     bool          paused;
     bool          interrupted;
     RenderFn      render_fn;
+    ControlFn     control_fn;
     const char   *algo_name;
 };
 

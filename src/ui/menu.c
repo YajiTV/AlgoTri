@@ -86,6 +86,32 @@ static void draw_main_menu(const MenuState *state, int rows, int cols)
     refresh();
 }
 
+static bool handle_sort_controls(SortContext *ctx)
+{
+    int ch = getch();
+
+    if (ch == 'q' || ch == 'Q') {
+        ctx->interrupted = true;
+        ctx->paused = false;
+        return false;
+    }
+    if (ch == ' ' || ch == 'p' || ch == 'P')
+        ctx->paused = !ctx->paused;
+
+    while (ctx->paused && !ctx->interrupted) {
+        renderer_draw(ctx);
+        ch = getch();
+        if (ch == ' ' || ch == 'p' || ch == 'P')
+            ctx->paused = false;
+        else if (ch == 'q' || ch == 'Q') {
+            ctx->interrupted = true;
+            ctx->paused = false;
+        }
+        napms(30);
+    }
+    return !ctx->interrupted;
+}
+
 static void run_sort(SortContext *ctx, const MenuState *state)
 {
     if (!context_resize(ctx, SIZES[state->size_index]))
@@ -94,8 +120,12 @@ static void run_sort(SortContext *ctx, const MenuState *state)
     ctx->algo_name = ALGOS[state->algorithm_index].label;
     ctx->delay_ms = SPEEDS[state->speed_index].delay_ms;
     ctx->render_fn = renderer_draw;
+    ctx->control_fn = handle_sort_controls;
 
     ALGOS[state->algorithm_index].fn(ctx);
+
+    if (ctx->interrupted)
+        return;
 
     ctx->active_index   = -1;
     ctx->compared_index = -1;

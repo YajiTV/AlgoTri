@@ -2,6 +2,12 @@
 #include "core/context.h"
 #include "core/operations.h"
 
+static bool interrupt_control(SortContext *ctx)
+{
+    ctx->interrupted = true;
+    return false;
+}
+
 static void test_compare_tracks_operation(void)
 {
     const int values[] = {4, 9};
@@ -40,7 +46,18 @@ static void test_invalid_operations_are_ignored(void)
     ASSERT(ctx->swaps == 0);
     ASSERT(ops_compare(NULL, 0, 0) == 0);
     ops_swap(NULL, 0, 0);
-    ops_render_step(NULL);
+    ASSERT(!ops_render_step(NULL));
+    context_destroy(ctx);
+}
+
+static void test_render_step_can_interrupt(void)
+{
+    SortContext *ctx = context_create(2);
+    ASSERT(ctx != NULL);
+    ctx->delay_ms = 0;
+    ctx->control_fn = interrupt_control;
+    ASSERT(!ops_render_step(ctx));
+    ASSERT(ctx->interrupted);
     context_destroy(ctx);
 }
 
@@ -49,5 +66,6 @@ int main(void)
     test_compare_tracks_operation();
     test_swap_tracks_operation();
     test_invalid_operations_are_ignored();
+    test_render_step_can_interrupt();
     TEST_SUMMARY();
 }

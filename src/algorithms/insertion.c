@@ -12,14 +12,17 @@ void sort_insertion(SortContext *ctx)
 
         while (current > 0) {
             int comparison = ops_compare(ctx, current - 1, current);
-            ops_render_step(ctx);
+            if (!ops_render_step(ctx))
+                goto finish;
             if (comparison <= 0)
                 break;
             ops_swap(ctx, current - 1, current);
-            ops_render_step(ctx);
+            if (!ops_render_step(ctx))
+                goto finish;
             current--;
         }
     }
+finish:
     ctx->active_index = -1;
     ctx->compared_index = -1;
 }

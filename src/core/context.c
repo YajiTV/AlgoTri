@@ -39,6 +39,7 @@ SortContext *context_create(size_t length)
     ctx->paused         = false;
     ctx->interrupted    = false;
     ctx->render_fn      = NULL;
+    ctx->control_fn     = NULL;
     ctx->algo_name      = NULL;
 
     seed_random_once();
