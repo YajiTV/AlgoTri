@@ -21,8 +21,35 @@ static const AlgoEntry ALGOS[] = {
 
 #define ALGO_COUNT ((int)(sizeof(ALGOS) / sizeof(ALGOS[0])))
 
-static void draw_main_menu(int selected, int rows, int cols)
+static const size_t SIZES[] = {10, 20, 30, 40};
+
+#define SIZE_COUNT ((int)(sizeof(SIZES) / sizeof(SIZES[0])))
+#define MENU_ITEM_COUNT 3
+
+typedef struct {
+    int selected_item;
+    int algorithm_index;
+    int size_index;
+} MenuState;
+
+static void draw_menu_item(int row, int cols, bool selected, const char *label,
+                           const char *value)
 {
+    int x = (cols - 38) / 2;
+    if (x < 0)
+        x = 0;
+
+    if (selected)
+        attron(A_REVERSE);
+    mvprintw(row, x, "  %-15s %-17s  ", label, value);
+    if (selected)
+        attroff(A_REVERSE);
+}
+
+static void draw_main_menu(const MenuState *state, int rows, int cols)
+{
+    char size_label[16];
+
     erase();
 
     attron(COLOR_PAIR(COLOR_PAIR_BORDER) | A_BOLD);
@@ -30,33 +57,29 @@ static void draw_main_menu(int selected, int rows, int cols)
     mvprintw(2, (cols - (int)strlen(title)) / 2, "%s", title);
     attroff(COLOR_PAIR(COLOR_PAIR_BORDER) | A_BOLD);
 
-    mvprintw(4, (cols - 24) / 2, "Choisissez un algorithme");
+    mvprintw(4, (cols - 20) / 2, "Configurez votre tri");
 
-    for (int i = 0; i < ALGO_COUNT; i++) {
-        int row = 6 + i * 2;
-        int x   = (cols - 30) / 2;
-        if (i == selected) {
-            attron(A_REVERSE);
-            mvprintw(row, x, "  %d. %-26s", i + 1, ALGOS[i].label);
-            attroff(A_REVERSE);
-        } else {
-            mvprintw(row, x, "  %d. %-26s", i + 1, ALGOS[i].label);
-        }
-    }
+    snprintf(size_label, sizeof(size_label), "%zu valeurs", SIZES[state->size_index]);
+    draw_menu_item(7, cols, state->selected_item == 0, "Algorithme",
+                   ALGOS[state->algorithm_index].label);
+    draw_menu_item(9, cols, state->selected_item == 1, "Taille", size_label);
+    draw_menu_item(12, cols, state->selected_item == 2, "", "Lancer le tri");
 
-    const char *hint = "Fleches : naviguer   Entree : lancer   Q : quitter";
+    const char *hint = "Fleches : choisir   Entree : valider   Q : quitter";
     mvprintw(rows - 2, (cols - (int)strlen(hint)) / 2, "%s", hint);
 
     refresh();
 }
 
-static void run_sort(SortContext *ctx, int algo_index)
+static void run_sort(SortContext *ctx, const MenuState *state)
 {
-    ctx->algo_name = ALGOS[algo_index].label;
-    ctx->render_fn = renderer_draw;
-    context_randomize(ctx);
+    if (!context_resize(ctx, SIZES[state->size_index]))
+        return;
 
-    ALGOS[algo_index].fn(ctx);
+    ctx->algo_name = ALGOS[state->algorithm_index].label;
+    ctx->render_fn = renderer_draw;
+
+    ALGOS[state->algorithm_index].fn(ctx);
 
     ctx->active_index   = -1;
     ctx->compared_index = -1;
@@ -74,26 +97,41 @@ void menu_run(SortContext *ctx)
 {
     renderer_init();
 
-    int selected = 0;
+    MenuState state = {
+        .selected_item = 0,
+        .algorithm_index = 0,
+        .size_index = 1
+    };
     bool running = true;
 
     while (running) {
-        draw_main_menu(selected, LINES, COLS);
+        draw_main_menu(&state, LINES, COLS);
 
         int ch = getch();
         switch (ch) {
             case KEY_UP:
-                selected = (selected - 1 + ALGO_COUNT) % ALGO_COUNT;
+                state.selected_item =
+                    (state.selected_item - 1 + MENU_ITEM_COUNT) % MENU_ITEM_COUNT;
                 break;
             case KEY_DOWN:
-                selected = (selected + 1) % ALGO_COUNT;
+                state.selected_item = (state.selected_item + 1) % MENU_ITEM_COUNT;
                 break;
-            case '1': case '2': case '3': case '4':
-                selected = ch - '1';
-                run_sort(ctx, selected);
+            case KEY_LEFT:
+                if (state.selected_item == 0)
+                    state.algorithm_index =
+                        (state.algorithm_index - 1 + ALGO_COUNT) % ALGO_COUNT;
+                else if (state.selected_item == 1)
+                    state.size_index = (state.size_index - 1 + SIZE_COUNT) % SIZE_COUNT;
+                break;
+            case KEY_RIGHT:
+                if (state.selected_item == 0)
+                    state.algorithm_index = (state.algorithm_index + 1) % ALGO_COUNT;
+                else if (state.selected_item == 1)
+                    state.size_index = (state.size_index + 1) % SIZE_COUNT;
                 break;
             case '\n': case KEY_ENTER:
-                run_sort(ctx, selected);
+                if (state.selected_item == 2)
+                    run_sort(ctx, &state);
                 break;
             case 'q': case 'Q':
                 running = false;

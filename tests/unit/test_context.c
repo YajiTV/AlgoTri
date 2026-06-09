@@ -60,6 +60,21 @@ static void test_set_values(void)
     context_destroy(ctx);
 }
 
+static void test_resize(void)
+{
+    SortContext *ctx = context_create(4);
+    ASSERT(ctx != NULL);
+    ASSERT(context_resize(ctx, 12));
+    ASSERT(ctx->length == 12);
+    for (size_t i = 0; i < ctx->length; i++) {
+        ASSERT(ctx->values[i] >= 1);
+        ASSERT(ctx->values[i] <= (int)ctx->length);
+    }
+    ASSERT(!context_resize(ctx, 0));
+    ASSERT(!context_resize(NULL, 12));
+    context_destroy(ctx);
+}
+
 int main(void)
 {
     test_create_valid();
@@ -67,5 +82,6 @@ int main(void)
     test_randomize_bounds();
     test_reset_stats();
     test_set_values();
+    test_resize();
     TEST_SUMMARY();
 }

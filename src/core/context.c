@@ -100,3 +100,18 @@ bool context_set_values(SortContext *ctx, const int *values, size_t length)
     context_reset_stats(ctx);
     return true;
 }
+
+bool context_resize(SortContext *ctx, size_t length)
+{
+    if (!ctx || length == 0 || length > SIZE_MAX / sizeof(int))
+        return false;
+
+    int *new_values = realloc(ctx->values, length * sizeof(int));
+    if (!new_values)
+        return false;
+
+    ctx->values = new_values;
+    ctx->length = length;
+    context_randomize(ctx);
+    return true;
+}
