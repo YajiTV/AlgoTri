@@ -114,18 +114,17 @@ static void test_consecutive_sorts(void)
 /* Statistics reset between sorts */
 static void test_stats_reset_between_sorts(void)
 {
-    SortContext *ctx = context_create(10);
+    const int sorted_values[] = {1, 2, 3, 4, 5};
+    SortContext *ctx = context_create(5);
     ASSERT(ctx != NULL);
     ctx->delay_ms = 0;
 
+    ASSERT(context_set_values(ctx, sorted_values, 5));
+    ctx->comparisons = 999;
+    ctx->swaps = 999;
     sort_bubble(ctx);
-    size_t first_comparisons = ctx->comparisons;
-    ASSERT(first_comparisons > 0);
-
-    context_randomize(ctx);
-    sort_bubble(ctx);
-    ASSERT(ctx->comparisons > 0);
-    ASSERT(ctx->comparisons != first_comparisons || ctx->length < 3);
+    ASSERT(ctx->comparisons == 4);
+    ASSERT(ctx->swaps == 0);
 
     context_destroy(ctx);
 }
