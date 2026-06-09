@@ -162,7 +162,7 @@ void renderer_wave(const SortContext *ctx)
         return;
 
     int bar_top = 2;
-    int bar_bot = rows - 5;
+    int bar_bot = rows - 6;
     int bar_w   = cols / (int)ctx->length;
     if (bar_w < 1) bar_w = 1;
 

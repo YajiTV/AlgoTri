@@ -89,6 +89,15 @@ static int centered_x(int cols, const char *text)
     return x > 0 ? x : 0;
 }
 
+static void draw_centered_line(int row, int cols, const char *text)
+{
+    int x = centered_x(cols, text);
+    int available = cols - x - 1;
+
+    if (available > 0)
+        mvaddnstr(row, x, text, available);
+}
+
 static void draw_main_menu(const MenuState *state, int rows, int cols)
 {
     char size_label[16];
@@ -176,7 +185,9 @@ static void run_sort(SortContext *ctx, const MenuState *state)
 
         nodelay(stdscr, FALSE);
         const char *done_msg = "Tri terminé   R : encore   Entrée : menu";
-        mvprintw(LINES - 1, centered_x(COLS, done_msg), "%s", done_msg);
+        move(LINES - 1, 0);
+        clrtoeol();
+        draw_centered_line(LINES - 1, COLS, done_msg);
         refresh();
         int ch = getch();
         restart = ch == 'r' || ch == 'R';
