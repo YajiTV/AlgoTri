@@ -97,7 +97,7 @@ static void draw_explanation(const SortContext *ctx, int row, int cols)
 {
     char message[96];
 
-    if (ctx->active_index < 0 || ctx->compared_index < 0)
+    if (!ctx->paused || ctx->active_index < 0 || ctx->compared_index < 0)
         return;
 
     int left = ctx->values[ctx->active_index];
