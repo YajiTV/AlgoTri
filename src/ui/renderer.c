@@ -89,7 +89,7 @@ static void draw_stats(const SortContext *ctx, int row, int cols)
     mvhline(row, 0, ACS_HLINE, cols);
     attroff(COLOR_PAIR(COLOR_PAIR_BORDER));
 
-    mvprintw(row + 1, 2, "Comparaisons : %-6zu   Echanges : %-6zu",
+    mvprintw(row + 1, 2, "Comparaisons : %-6zu   Échanges : %-6zu",
              ctx->comparisons, ctx->swaps);
 }
 
@@ -161,7 +161,8 @@ void renderer_draw(const SortContext *ctx)
     if (rows < RENDERER_MIN_ROWS || cols < RENDERER_MIN_COLS) {
         erase();
         const char *msg = "Agrandissez le terminal.";
-        mvprintw(rows / 2, (cols - (int)strlen(msg)) / 2, "%s", msg);
+        int x = (cols - (int)strlen(msg)) / 2;
+        mvprintw(rows / 2, x > 0 ? x : 0, "%s", msg);
         refresh();
         return;
     }

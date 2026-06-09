@@ -37,6 +37,8 @@ static const SpeedEntry SPEEDS[] = {
 #define SIZE_COUNT ((int)(sizeof(SIZES) / sizeof(SIZES[0])))
 #define SPEED_COUNT ((int)(sizeof(SPEEDS) / sizeof(SPEEDS[0])))
 #define MENU_ITEM_COUNT 4
+#define MENU_MIN_COLS 50
+#define MENU_MIN_ROWS 18
 
 typedef struct {
     int selected_item;
@@ -59,18 +61,31 @@ static void draw_menu_item(int row, int cols, bool selected, const char *label,
         attroff(A_REVERSE);
 }
 
+static int centered_x(int cols, const char *text)
+{
+    int x = (cols - (int)strlen(text)) / 2;
+    return x > 0 ? x : 0;
+}
+
 static void draw_main_menu(const MenuState *state, int rows, int cols)
 {
     char size_label[16];
 
     erase();
+    if (rows < MENU_MIN_ROWS || cols < MENU_MIN_COLS) {
+        const char *message = "Agrandissez le terminal.";
+        mvprintw(rows / 2, centered_x(cols, message), "%s", message);
+        refresh();
+        return;
+    }
 
     attron(COLOR_PAIR(COLOR_PAIR_BORDER) | A_BOLD);
-    const char *title = "=== AlgoTri ===";
-    mvprintw(2, (cols - (int)strlen(title)) / 2, "%s", title);
+    const char *title = "AlgoTri";
+    mvprintw(2, centered_x(cols, title), "%s", title);
     attroff(COLOR_PAIR(COLOR_PAIR_BORDER) | A_BOLD);
 
-    mvprintw(4, (cols - 20) / 2, "Configurez votre tri");
+    const char *subtitle = "Configurez votre tri";
+    mvprintw(4, centered_x(cols, subtitle), "%s", subtitle);
 
     snprintf(size_label, sizeof(size_label), "%zu valeurs", SIZES[state->size_index]);
     draw_menu_item(7, cols, state->selected_item == 0, "Algorithme",
@@ -80,8 +95,8 @@ static void draw_main_menu(const MenuState *state, int rows, int cols)
                    SPEEDS[state->speed_index].label);
     draw_menu_item(14, cols, state->selected_item == 3, "", "Lancer le tri");
 
-    const char *hint = "Fleches : choisir   Entree : valider   Q : quitter";
-    mvprintw(rows - 2, (cols - (int)strlen(hint)) / 2, "%s", hint);
+    const char *hint = "Flèches : choisir   Entrée : valider   Q : quitter";
+    mvprintw(rows - 2, centered_x(cols, hint), "%s", hint);
 
     refresh();
 }
@@ -135,8 +150,8 @@ static void run_sort(SortContext *ctx, const MenuState *state)
         renderer_wave(ctx);
 
         nodelay(stdscr, FALSE);
-        const char *done_msg = "Tri terminé   R : recommencer   Entrée : menu";
-        mvprintw(LINES - 1, (COLS - (int)strlen(done_msg)) / 2, "%s", done_msg);
+        const char *done_msg = "Tri terminé   R : encore   Entrée : menu";
+        mvprintw(LINES - 1, centered_x(COLS, done_msg), "%s", done_msg);
         refresh();
         int ch = getch();
         restart = ch == 'r' || ch == 'R';
