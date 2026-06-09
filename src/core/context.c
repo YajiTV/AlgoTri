@@ -58,8 +58,17 @@ void context_randomize(SortContext *ctx)
 {
     if (!ctx)
         return;
+
     for (size_t i = 0; i < ctx->length; i++)
-        ctx->values[i] = (int)(rand() % (int)ctx->length) + 1;
+        ctx->values[i] = (int)(i + 1);
+
+    for (size_t i = ctx->length - 1; i > 0; i--) {
+        size_t j = (size_t)rand() % (i + 1);
+        int tmp        = ctx->values[i];
+        ctx->values[i] = ctx->values[j];
+        ctx->values[j] = tmp;
+    }
+
     context_reset_stats(ctx);
 }
 
