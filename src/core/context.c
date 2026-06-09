@@ -37,6 +37,9 @@ SortContext *context_create(size_t length)
     ctx->compared_index = -1;
     ctx->delay_ms       = 30;
     ctx->paused         = false;
+    ctx->interrupted    = false;
+    ctx->render_fn      = NULL;
+    ctx->algo_name      = NULL;
 
     seed_random_once();
     context_randomize(ctx);
@@ -69,6 +72,7 @@ void context_reset_stats(SortContext *ctx)
     ctx->active_index   = -1;
     ctx->compared_index = -1;
     ctx->paused         = false;
+    ctx->interrupted    = false;
 }
 
 bool context_set_values(SortContext *ctx, const int *values, size_t length)

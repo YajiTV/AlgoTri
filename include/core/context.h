@@ -4,7 +4,11 @@
 #include <stddef.h>
 #include <stdbool.h>
 
-typedef struct {
+typedef struct SortContext SortContext;
+
+typedef void (*RenderFn)(const SortContext *ctx);
+
+struct SortContext {
     int          *values;
     size_t        length;
     size_t        comparisons;
@@ -13,7 +17,10 @@ typedef struct {
     int           compared_index;
     unsigned int  delay_ms;
     bool          paused;
-} SortContext;
+    bool          interrupted;
+    RenderFn      render_fn;
+    const char   *algo_name;
+};
 
 SortContext *context_create(size_t length);
 void         context_destroy(SortContext *ctx);

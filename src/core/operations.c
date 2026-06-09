@@ -32,7 +32,13 @@ void ops_swap(SortContext *ctx, size_t i, size_t j)
 
 void ops_render_step(SortContext *ctx)
 {
-    if (!ctx || ctx->delay_ms == 0)
+    if (!ctx)
+        return;
+
+    if (ctx->render_fn)
+        ctx->render_fn(ctx);
+
+    if (ctx->delay_ms == 0)
         return;
 
     struct timespec ts = {
