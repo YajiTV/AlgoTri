@@ -33,6 +33,29 @@ static void test_randomize_bounds(void)
     context_destroy(ctx);
 }
 
+static void assert_values_are_unique(const SortContext *ctx)
+{
+    for (size_t i = 0; i < ctx->length; i++) {
+        size_t occurrences = 0;
+
+        for (size_t j = 0; j < ctx->length; j++) {
+            if (ctx->values[j] == (int)(i + 1))
+                occurrences++;
+        }
+        ASSERT(occurrences == 1);
+    }
+}
+
+static void test_randomize_unique_values(void)
+{
+    SortContext *ctx = context_create(40);
+    ASSERT(ctx != NULL);
+    assert_values_are_unique(ctx);
+    context_randomize(ctx);
+    assert_values_are_unique(ctx);
+    context_destroy(ctx);
+}
+
 static void test_reset_stats(void)
 {
     SortContext *ctx = context_create(5);
@@ -70,6 +93,7 @@ static void test_resize(void)
         ASSERT(ctx->values[i] >= 1);
         ASSERT(ctx->values[i] <= (int)ctx->length);
     }
+    assert_values_are_unique(ctx);
     ASSERT(!context_resize(ctx, 0));
     ASSERT(!context_resize(NULL, 12));
     context_destroy(ctx);
@@ -80,6 +104,7 @@ int main(void)
     test_create_valid();
     test_create_zero();
     test_randomize_bounds();
+    test_randomize_unique_values();
     test_reset_stats();
     test_set_values();
     test_resize();
