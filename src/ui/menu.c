@@ -204,6 +204,8 @@ void menu_run(SortContext *ctx)
             case '\n': case KEY_ENTER:
                 if (state.selected_item == 3)
                     run_sort(ctx, &state);
+                else
+                    state.selected_item++;
                 break;
             case 'q': case 'Q':
                 running = false;
