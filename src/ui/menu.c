@@ -50,13 +50,15 @@ typedef struct {
 static void draw_menu_item(int row, int cols, bool selected, const char *label,
                            const char *value)
 {
+    char displayed_value[48];
     int x = (cols - 38) / 2;
     if (x < 0)
         x = 0;
 
+    snprintf(displayed_value, sizeof(displayed_value), "← %s →", value);
     if (selected)
         attron(A_REVERSE);
-    mvprintw(row, x, "  %-15s %-17s  ", label, value);
+    mvprintw(row, x, "  %-15s %-17s  ", label, displayed_value);
     if (selected)
         attroff(A_REVERSE);
 }
