@@ -23,13 +23,26 @@ static const AlgoEntry ALGOS[] = {
 
 static const size_t SIZES[] = {10, 20, 30, 40};
 
+typedef struct {
+    const char  *label;
+    unsigned int delay_ms;
+} SpeedEntry;
+
+static const SpeedEntry SPEEDS[] = {
+    {"Lente",   120},
+    {"Normale", 45},
+    {"Rapide",  10},
+};
+
 #define SIZE_COUNT ((int)(sizeof(SIZES) / sizeof(SIZES[0])))
-#define MENU_ITEM_COUNT 3
+#define SPEED_COUNT ((int)(sizeof(SPEEDS) / sizeof(SPEEDS[0])))
+#define MENU_ITEM_COUNT 4
 
 typedef struct {
     int selected_item;
     int algorithm_index;
     int size_index;
+    int speed_index;
 } MenuState;
 
 static void draw_menu_item(int row, int cols, bool selected, const char *label,
@@ -63,7 +76,9 @@ static void draw_main_menu(const MenuState *state, int rows, int cols)
     draw_menu_item(7, cols, state->selected_item == 0, "Algorithme",
                    ALGOS[state->algorithm_index].label);
     draw_menu_item(9, cols, state->selected_item == 1, "Taille", size_label);
-    draw_menu_item(12, cols, state->selected_item == 2, "", "Lancer le tri");
+    draw_menu_item(11, cols, state->selected_item == 2, "Vitesse",
+                   SPEEDS[state->speed_index].label);
+    draw_menu_item(14, cols, state->selected_item == 3, "", "Lancer le tri");
 
     const char *hint = "Fleches : choisir   Entree : valider   Q : quitter";
     mvprintw(rows - 2, (cols - (int)strlen(hint)) / 2, "%s", hint);
@@ -77,6 +92,7 @@ static void run_sort(SortContext *ctx, const MenuState *state)
         return;
 
     ctx->algo_name = ALGOS[state->algorithm_index].label;
+    ctx->delay_ms = SPEEDS[state->speed_index].delay_ms;
     ctx->render_fn = renderer_draw;
 
     ALGOS[state->algorithm_index].fn(ctx);
@@ -100,7 +116,8 @@ void menu_run(SortContext *ctx)
     MenuState state = {
         .selected_item = 0,
         .algorithm_index = 0,
-        .size_index = 1
+        .size_index = 1,
+        .speed_index = 1
     };
     bool running = true;
 
@@ -122,15 +139,20 @@ void menu_run(SortContext *ctx)
                         (state.algorithm_index - 1 + ALGO_COUNT) % ALGO_COUNT;
                 else if (state.selected_item == 1)
                     state.size_index = (state.size_index - 1 + SIZE_COUNT) % SIZE_COUNT;
+                else if (state.selected_item == 2)
+                    state.speed_index =
+                        (state.speed_index - 1 + SPEED_COUNT) % SPEED_COUNT;
                 break;
             case KEY_RIGHT:
                 if (state.selected_item == 0)
                     state.algorithm_index = (state.algorithm_index + 1) % ALGO_COUNT;
                 else if (state.selected_item == 1)
                     state.size_index = (state.size_index + 1) % SIZE_COUNT;
+                else if (state.selected_item == 2)
+                    state.speed_index = (state.speed_index + 1) % SPEED_COUNT;
                 break;
             case '\n': case KEY_ENTER:
-                if (state.selected_item == 2)
+                if (state.selected_item == 3)
                     run_sort(ctx, &state);
                 break;
             case 'q': case 'Q':
