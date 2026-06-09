@@ -1,11 +1,23 @@
+#include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
 #include "core/context.h"
 
+static void seed_random_once(void)
+{
+    static bool seeded = false;
+
+    if (!seeded) {
+        srand((unsigned int)time(NULL));
+        seeded = true;
+    }
+}
+
 SortContext *context_create(size_t length)
 {
-    if (length == 0)
+    if (length == 0 || length > SIZE_MAX / sizeof(int))
         return NULL;
 
     SortContext *ctx = malloc(sizeof(SortContext));
@@ -26,7 +38,7 @@ SortContext *context_create(size_t length)
     ctx->delay_ms       = 30;
     ctx->paused         = false;
 
-    srand((unsigned int)time(NULL));
+    seed_random_once();
     context_randomize(ctx);
     return ctx;
 }
@@ -57,4 +69,21 @@ void context_reset_stats(SortContext *ctx)
     ctx->active_index   = -1;
     ctx->compared_index = -1;
     ctx->paused         = false;
+}
+
+bool context_set_values(SortContext *ctx, const int *values, size_t length)
+{
+    if (!ctx || !values || length == 0 || length > SIZE_MAX / sizeof(int))
+        return false;
+
+    int *new_values = malloc(length * sizeof(int));
+    if (!new_values)
+        return false;
+
+    memcpy(new_values, values, length * sizeof(int));
+    free(ctx->values);
+    ctx->values = new_values;
+    ctx->length = length;
+    context_reset_stats(ctx);
+    return true;
 }
