@@ -114,29 +114,34 @@ static bool handle_sort_controls(SortContext *ctx)
 
 static void run_sort(SortContext *ctx, const MenuState *state)
 {
-    if (!context_resize(ctx, SIZES[state->size_index]))
-        return;
-
     ctx->algo_name = ALGOS[state->algorithm_index].label;
     ctx->delay_ms = SPEEDS[state->speed_index].delay_ms;
     ctx->render_fn = renderer_draw;
     ctx->control_fn = handle_sort_controls;
 
-    ALGOS[state->algorithm_index].fn(ctx);
+    bool restart = true;
+    while (restart) {
+        restart = false;
+        if (!context_resize(ctx, SIZES[state->size_index]))
+            return;
 
-    if (ctx->interrupted)
-        return;
+        ALGOS[state->algorithm_index].fn(ctx);
 
-    ctx->active_index   = -1;
-    ctx->compared_index = -1;
-    renderer_wave(ctx);
+        if (ctx->interrupted)
+            return;
 
-    nodelay(stdscr, FALSE);
-    const char *done_msg = "Tri termine - appuyez sur une touche";
-    mvprintw(LINES - 1, (COLS - (int)strlen(done_msg)) / 2, "%s", done_msg);
-    refresh();
-    getch();
-    nodelay(stdscr, TRUE);
+        ctx->active_index   = -1;
+        ctx->compared_index = -1;
+        renderer_wave(ctx);
+
+        nodelay(stdscr, FALSE);
+        const char *done_msg = "Tri terminé   R : recommencer   Entrée : menu";
+        mvprintw(LINES - 1, (COLS - (int)strlen(done_msg)) / 2, "%s", done_msg);
+        refresh();
+        int ch = getch();
+        restart = ch == 'r' || ch == 'R';
+        nodelay(stdscr, TRUE);
+    }
 }
 
 void menu_run(SortContext *ctx)
