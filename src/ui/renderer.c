@@ -1,3 +1,4 @@
+#include <locale.h>
 #include <ncurses.h>
 #include <string.h>
 
@@ -5,6 +6,7 @@
 
 void renderer_init(void)
 {
+    setlocale(LC_ALL, "");
     initscr();
     cbreak();
     noecho();
@@ -14,11 +16,12 @@ void renderer_init(void)
 
     if (has_colors()) {
         start_color();
+        use_default_colors();
         init_pair(COLOR_PAIR_BORDER,   COLOR_CYAN,   COLOR_BLACK);
-        init_pair(COLOR_PAIR_NORMAL,   COLOR_WHITE,  COLOR_BLACK);
-        init_pair(COLOR_PAIR_COMPARED, COLOR_YELLOW, COLOR_BLACK);
-        init_pair(COLOR_PAIR_SWAPPED,  COLOR_RED,    COLOR_BLACK);
-        init_pair(COLOR_PAIR_SORTED,   COLOR_GREEN,  COLOR_BLACK);
+        init_pair(COLOR_PAIR_NORMAL,   COLOR_BLACK,  COLOR_WHITE);
+        init_pair(COLOR_PAIR_COMPARED, COLOR_BLACK,  COLOR_YELLOW);
+        init_pair(COLOR_PAIR_SWAPPED,  COLOR_BLACK,  COLOR_RED);
+        init_pair(COLOR_PAIR_SORTED,   COLOR_BLACK,  COLOR_GREEN);
     }
 }
 
@@ -68,19 +71,14 @@ static void draw_bars(const SortContext *ctx, int bar_top, int bar_bot, int cols
             filled = 1;
 
         int color = bar_color(ctx, i);
-        attron(COLOR_PAIR(color));
-
         int x = i * bar_w;
+
         for (int r = bar_top; r <= bar_bot; r++) {
             int dist_from_bottom = bar_bot - r + 1;
-            for (int w = 0; w < bar_w && x + w < cols; w++) {
-                if (dist_from_bottom <= filled)
-                    mvaddch(r, x + w, ACS_BLOCK);
-                else
-                    mvaddch(r, x + w, ' ');
-            }
+            int pair = (dist_from_bottom <= filled) ? COLOR_PAIR(color) : 0;
+            for (int w = 0; w < bar_w && x + w < cols; w++)
+                mvaddch(r, x + w, ' ' | pair);
         }
-        attroff(COLOR_PAIR(color));
     }
 }
 
@@ -121,12 +119,12 @@ void renderer_draw(const SortContext *ctx)
         return;
     }
 
-    clear();
+    erase();
 
     draw_title(ctx, cols);
 
-    int bar_top  = 2;
-    int bar_bot  = rows - 5;
+    int bar_top = 2;
+    int bar_bot = rows - 5;
     draw_bars(ctx, bar_top, bar_bot, cols);
 
     draw_stats(ctx, rows - 4, cols);

@@ -24,7 +24,7 @@ UNIT_BINS := $(patsubst $(TEST_DIR)/unit/%.c, $(BIN_DIR)/%, $(UNIT_SRCS))
 INTG_SRCS := $(wildcard $(TEST_DIR)/integration/test_*.c)
 INTG_BINS := $(patsubst $(TEST_DIR)/integration/%.c, $(BIN_DIR)/%, $(INTG_SRCS))
 
-LDFLAGS := $(shell pkg-config --libs ncurses)
+LDFLAGS := $(shell pkg-config --libs ncursesw)
 
 .PHONY: all run test clean fclean re
 

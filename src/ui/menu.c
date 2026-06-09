@@ -63,7 +63,7 @@ static void run_sort(SortContext *ctx, int algo_index)
     renderer_draw(ctx);
 
     nodelay(stdscr, FALSE);
-    const char *done_msg = "Tri terminé — appuyez sur une touche";
+    const char *done_msg = "Tri termine - appuyez sur une touche";
     mvprintw(LINES - 1, (COLS - (int)strlen(done_msg)) / 2, "%s", done_msg);
     refresh();
     getch();
