@@ -11,8 +11,16 @@ Visualiseur interactif d'algorithmes de tri dans le terminal.
 
 ## Prérequis
 
+Arch Linux :
+
 ```bash
-sudo apt-get install -y libncurses-dev valgrind
+sudo pacman -S gcc make ncurses valgrind
+```
+
+Debian / Ubuntu :
+
+```bash
+sudo apt-get install -y build-essential libncurses-dev valgrind
 ```
 
 ## Lancer le projet
