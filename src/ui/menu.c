@@ -23,7 +23,7 @@ static const AlgoEntry ALGOS[] = {
 
 static void draw_main_menu(int selected, int rows, int cols)
 {
-    clear();
+    erase();
 
     attron(COLOR_PAIR(COLOR_PAIR_BORDER) | A_BOLD);
     const char *title = "=== AlgoTri ===";

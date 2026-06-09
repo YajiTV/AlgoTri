@@ -114,7 +114,7 @@ void renderer_draw(const SortContext *ctx)
     int cols = COLS;
 
     if (rows < RENDERER_MIN_ROWS || cols < RENDERER_MIN_COLS) {
-        clear();
+        erase();
         const char *msg = "Agrandissez le terminal.";
         mvprintw(rows / 2, (cols - (int)strlen(msg)) / 2, "%s", msg);
         refresh();
