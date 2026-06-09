@@ -93,10 +93,37 @@ static void draw_stats(const SortContext *ctx, int row, int cols)
              ctx->comparisons, ctx->swaps);
 }
 
+static void draw_explanation(const SortContext *ctx, int row, int cols)
+{
+    char message[96];
+
+    if (ctx->active_index < 0 || ctx->compared_index < 0)
+        return;
+
+    int left = ctx->values[ctx->active_index];
+    int right = ctx->values[ctx->compared_index];
+    if (ctx->operation == OPERATION_COMPARE) {
+        if (left == right)
+            snprintf(message, sizeof(message), "Comparaison : %d et %d sont égales.",
+                     left, right);
+        else
+            snprintf(message, sizeof(message), "Comparaison : %d est %s que %d.",
+                     left, left < right ? "plus petite" : "plus grande", right);
+    } else if (ctx->operation == OPERATION_SWAP) {
+        snprintf(message, sizeof(message), "Échange : %d et %d changent de place.",
+                 left, right);
+    } else {
+        return;
+    }
+
+    int x = (cols - (int)strlen(message)) / 2;
+    mvprintw(row, x > 0 ? x : 0, "%s", message);
+}
+
 static void draw_controls(const SortContext *ctx, int row, int cols)
 {
     const char *hint = ctx->paused
-        ? "En pause   Espace : reprendre   Q : menu"
+        ? "Pause   N / → : étape   Espace : reprendre   Q : menu"
         : "Espace : pause   Q : menu";
     int x = (cols - (int)strlen(hint)) / 2;
     if (x < 0) x = 0;
@@ -172,9 +199,10 @@ void renderer_draw(const SortContext *ctx)
     draw_title(ctx, cols);
 
     int bar_top = 2;
-    int bar_bot = rows - 5;
+    int bar_bot = rows - 6;
     draw_bars(ctx, bar_top, bar_bot, cols);
 
+    draw_explanation(ctx, rows - 5, cols);
     draw_stats(ctx, rows - 4, cols);
     draw_controls(ctx, rows - 1, cols);
 

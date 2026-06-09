@@ -9,6 +9,12 @@ typedef struct SortContext SortContext;
 typedef void (*RenderFn)(const SortContext *ctx);
 typedef bool (*ControlFn)(SortContext *ctx);
 
+typedef enum {
+    OPERATION_NONE,
+    OPERATION_COMPARE,
+    OPERATION_SWAP
+} OperationKind;
+
 struct SortContext {
     int          *values;
     size_t        length;
@@ -16,6 +22,7 @@ struct SortContext {
     size_t        swaps;
     int           active_index;
     int           compared_index;
+    OperationKind operation;
     unsigned int  delay_ms;
     bool          paused;
     bool          interrupted;

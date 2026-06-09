@@ -138,6 +138,9 @@ static bool handle_sort_controls(SortContext *ctx)
         ch = getch();
         if (ch == ' ' || ch == 'p' || ch == 'P')
             ctx->paused = false;
+        else if (ch == 'n' || ch == 'N' || ch == KEY_RIGHT ||
+                 ch == '\n' || ch == KEY_ENTER)
+            return true;
         else if (ch == 'q' || ch == 'Q') {
             ctx->interrupted = true;
             ctx->paused = false;

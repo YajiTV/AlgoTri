@@ -18,6 +18,7 @@ static void test_compare_tracks_operation(void)
     ASSERT(ctx->comparisons == 1);
     ASSERT(ctx->active_index == 0);
     ASSERT(ctx->compared_index == 1);
+    ASSERT(ctx->operation == OPERATION_COMPARE);
     context_destroy(ctx);
 }
 
@@ -31,6 +32,7 @@ static void test_swap_tracks_operation(void)
     ASSERT(ctx->values[0] == 9);
     ASSERT(ctx->values[1] == 4);
     ASSERT(ctx->swaps == 1);
+    ASSERT(ctx->operation == OPERATION_SWAP);
     ops_swap(ctx, 0, 0);
     ASSERT(ctx->swaps == 1);
     context_destroy(ctx);

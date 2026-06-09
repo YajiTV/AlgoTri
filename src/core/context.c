@@ -35,6 +35,7 @@ SortContext *context_create(size_t length)
     ctx->swaps          = 0;
     ctx->active_index   = -1;
     ctx->compared_index = -1;
+    ctx->operation      = OPERATION_NONE;
     ctx->delay_ms       = 30;
     ctx->paused         = false;
     ctx->interrupted    = false;
@@ -81,6 +82,7 @@ void context_reset_stats(SortContext *ctx)
     ctx->swaps          = 0;
     ctx->active_index   = -1;
     ctx->compared_index = -1;
+    ctx->operation      = OPERATION_NONE;
     ctx->paused         = false;
     ctx->interrupted    = false;
 }
