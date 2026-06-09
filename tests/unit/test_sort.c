@@ -13,6 +13,12 @@ static const SortFunction algorithms[] = {
     sort_quick
 };
 
+static bool interrupt_control(SortContext *ctx)
+{
+    ctx->interrupted = true;
+    return false;
+}
+
 static bool is_sorted(const SortContext *ctx)
 {
     for (size_t i = 1; i < ctx->length; i++) {
@@ -81,10 +87,29 @@ static void test_statistics_are_tracked(void)
     }
 }
 
+static void test_algorithms_can_be_interrupted(void)
+{
+    const int values[] = {5, 4, 3, 2, 1};
+
+    for (size_t i = 0; i < sizeof(algorithms) / sizeof(algorithms[0]); i++) {
+        SortContext *ctx = context_create(5);
+        ASSERT(ctx != NULL);
+        ASSERT(context_set_values(ctx, values, 5));
+        ctx->delay_ms = 0;
+        ctx->control_fn = interrupt_control;
+        algorithms[i](ctx);
+        ASSERT(ctx->interrupted);
+        ASSERT(ctx->active_index == -1);
+        ASSERT(ctx->compared_index == -1);
+        context_destroy(ctx);
+    }
+}
+
 int main(void)
 {
     test_common_inputs();
     test_single_and_empty_contexts();
     test_statistics_are_tracked();
+    test_algorithms_can_be_interrupted();
     TEST_SUMMARY();
 }

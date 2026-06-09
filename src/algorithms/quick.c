@@ -1,35 +1,42 @@
 #include "algorithms/sort.h"
 #include "core/operations.h"
 
-static size_t partition(SortContext *ctx, size_t low, size_t high)
+static bool partition(SortContext *ctx, size_t low, size_t high, size_t *pivot)
 {
     size_t store = low;
 
     for (size_t i = low; i < high; i++) {
         int comparison = ops_compare(ctx, i, high);
-        ops_render_step(ctx);
+        if (!ops_render_step(ctx))
+            return false;
         if (comparison <= 0) {
             ops_swap(ctx, store, i);
-            ops_render_step(ctx);
+            if (!ops_render_step(ctx))
+                return false;
             store++;
         }
     }
     ops_swap(ctx, store, high);
-    ops_render_step(ctx);
-    return store;
+    if (!ops_render_step(ctx))
+        return false;
+    *pivot = store;
+    return true;
 }
 
-static void quick_sort_range(SortContext *ctx, size_t low, size_t high)
+static bool quick_sort_range(SortContext *ctx, size_t low, size_t high)
 {
     if (low >= high)
-        return;
+        return true;
 
-    size_t pivot = partition(ctx, low, high);
+    size_t pivot;
+    if (!partition(ctx, low, high, &pivot))
+        return false;
 
-    if (pivot > low)
-        quick_sort_range(ctx, low, pivot - 1);
-    if (pivot < high)
-        quick_sort_range(ctx, pivot + 1, high);
+    if (pivot > low && !quick_sort_range(ctx, low, pivot - 1))
+        return false;
+    if (pivot < high && !quick_sort_range(ctx, pivot + 1, high))
+        return false;
+    return true;
 }
 
 void sort_quick(SortContext *ctx)

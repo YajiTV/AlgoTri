@@ -35,10 +35,12 @@ SortContext *context_create(size_t length)
     ctx->swaps          = 0;
     ctx->active_index   = -1;
     ctx->compared_index = -1;
+    ctx->operation      = OPERATION_NONE;
     ctx->delay_ms       = 30;
     ctx->paused         = false;
     ctx->interrupted    = false;
     ctx->render_fn      = NULL;
+    ctx->control_fn     = NULL;
     ctx->algo_name      = NULL;
 
     seed_random_once();
@@ -80,6 +82,7 @@ void context_reset_stats(SortContext *ctx)
     ctx->swaps          = 0;
     ctx->active_index   = -1;
     ctx->compared_index = -1;
+    ctx->operation      = OPERATION_NONE;
     ctx->paused         = false;
     ctx->interrupted    = false;
 }
@@ -98,5 +101,20 @@ bool context_set_values(SortContext *ctx, const int *values, size_t length)
     ctx->values = new_values;
     ctx->length = length;
     context_reset_stats(ctx);
+    return true;
+}
+
+bool context_resize(SortContext *ctx, size_t length)
+{
+    if (!ctx || length == 0 || length > SIZE_MAX / sizeof(int))
+        return false;
+
+    int *new_values = realloc(ctx->values, length * sizeof(int));
+    if (!new_values)
+        return false;
+
+    ctx->values = new_values;
+    ctx->length = length;
+    context_randomize(ctx);
     return true;
 }

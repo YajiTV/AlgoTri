@@ -12,16 +12,19 @@ void sort_bubble(SortContext *ctx)
 
         for (size_t i = 0; i + 1 < end; i++) {
             int comparison = ops_compare(ctx, i, i + 1);
-            ops_render_step(ctx);
+            if (!ops_render_step(ctx))
+                goto finish;
             if (comparison > 0) {
                 ops_swap(ctx, i, i + 1);
-                ops_render_step(ctx);
+                if (!ops_render_step(ctx))
+                    goto finish;
                 swapped = true;
             }
         }
         if (!swapped)
             break;
     }
+finish:
     ctx->active_index = -1;
     ctx->compared_index = -1;
 }

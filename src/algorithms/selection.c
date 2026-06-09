@@ -12,15 +12,18 @@ void sort_selection(SortContext *ctx)
 
         for (size_t j = i + 1; j < ctx->length; j++) {
             int comparison = ops_compare(ctx, j, minimum);
-            ops_render_step(ctx);
+            if (!ops_render_step(ctx))
+                goto finish;
             if (comparison < 0)
                 minimum = j;
         }
         if (minimum != i) {
             ops_swap(ctx, i, minimum);
-            ops_render_step(ctx);
+            if (!ops_render_step(ctx))
+                goto finish;
         }
     }
+finish:
     ctx->active_index = -1;
     ctx->compared_index = -1;
 }
