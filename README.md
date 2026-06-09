@@ -7,20 +7,19 @@ Visualiseur interactif d'algorithmes de tri dans le terminal.
 - C17 — GCC
 - ncursesw
 - Make
-- Valgrind
 
 ## Prérequis
 
 Arch Linux :
 
 ```bash
-sudo pacman -S gcc make ncurses valgrind
+sudo pacman -S gcc make ncurses
 ```
 
 Debian / Ubuntu :
 
 ```bash
-sudo apt-get install -y build-essential libncurses-dev valgrind
+sudo apt-get install -y build-essential libncurses-dev
 ```
 
 ## Lancer le projet
@@ -28,10 +27,4 @@ sudo apt-get install -y build-essential libncurses-dev valgrind
 ```bash
 make
 make run
-```
-
-## Lancer les tests
-
-```bash
-make test
 ```
