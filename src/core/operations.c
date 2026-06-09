@@ -1,4 +1,4 @@
-#include <unistd.h>
+#include <time.h>
 
 #include "core/operations.h"
 
@@ -20,5 +20,9 @@ void ops_swap(SortContext *ctx, size_t i, size_t j)
 
 void ops_render_step(SortContext *ctx)
 {
-    usleep(ctx->delay_ms * 1000);
+    struct timespec ts = {
+        .tv_sec  = ctx->delay_ms / 1000,
+        .tv_nsec = (long)(ctx->delay_ms % 1000) * 1000000L
+    };
+    nanosleep(&ts, NULL);
 }
