@@ -60,7 +60,7 @@ static void run_sort(SortContext *ctx, int algo_index)
 
     ctx->active_index   = -1;
     ctx->compared_index = -1;
-    renderer_draw(ctx);
+    renderer_wave(ctx);
 
     nodelay(stdscr, FALSE);
     const char *done_msg = "Tri termine - appuyez sur une touche";

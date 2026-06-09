@@ -1,6 +1,7 @@
 #include <locale.h>
 #include <ncurses.h>
 #include <string.h>
+#include <time.h>
 
 #include "ui/renderer.h"
 
@@ -101,6 +102,50 @@ static void draw_controls(int row, int cols)
     attron(A_DIM);
     mvprintw(row, x, "%s", hint);
     attroff(A_DIM);
+}
+
+static void draw_one_bar_green(int index, int val, int length, int bar_top,
+                               int bar_bot, int bar_w, int cols)
+{
+    int bar_h  = bar_bot - bar_top + 1;
+    int filled = val * bar_h / length;
+    if (filled == 0 && val > 0)
+        filled = 1;
+
+    int x = index * bar_w;
+    for (int r = bar_top; r <= bar_bot; r++) {
+        int dist_from_bottom = bar_bot - r + 1;
+        int pair = (dist_from_bottom <= filled) ? COLOR_PAIR(COLOR_PAIR_SORTED) : 0;
+        for (int w = 0; w < bar_w && x + w < cols; w++)
+            mvaddch(r, x + w, ' ' | pair);
+    }
+}
+
+void renderer_wave(const SortContext *ctx)
+{
+    if (!ctx || ctx->length == 0)
+        return;
+
+    int rows = LINES;
+    int cols = COLS;
+
+    if (rows < RENDERER_MIN_ROWS || cols < RENDERER_MIN_COLS)
+        return;
+
+    int bar_top = 2;
+    int bar_bot = rows - 5;
+    int bar_w   = cols / (int)ctx->length;
+    if (bar_w < 1) bar_w = 1;
+
+    long delay_ns = 600000000L / (long)ctx->length;
+    struct timespec ts = { .tv_sec = 0, .tv_nsec = delay_ns };
+
+    for (size_t k = 0; k < ctx->length; k++) {
+        draw_one_bar_green((int)k, ctx->values[k], (int)ctx->length,
+                           bar_top, bar_bot, bar_w, cols);
+        refresh();
+        nanosleep(&ts, NULL);
+    }
 }
 
 void renderer_draw(const SortContext *ctx)

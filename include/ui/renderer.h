@@ -15,5 +15,6 @@
 void renderer_init(void);
 void renderer_cleanup(void);
 void renderer_draw(const SortContext *ctx);
+void renderer_wave(const SortContext *ctx);
 
 #endif
