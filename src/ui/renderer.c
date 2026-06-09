@@ -43,6 +43,11 @@ static int bar_color(const SortContext *ctx, int i)
     return COLOR_PAIR_NORMAL;
 }
 
+static int bar_edge(int index, int length, int cols)
+{
+    return index * cols / length;
+}
+
 static void draw_title(const SortContext *ctx, int cols)
 {
     const char *name = ctx->algo_name ? ctx->algo_name : "AlgoTri";
@@ -62,8 +67,6 @@ static void draw_bars(const SortContext *ctx, int bar_top, int bar_bot, int cols
         return;
 
     int bar_h = bar_bot - bar_top + 1;
-    int bar_w = cols / (int)ctx->length;
-    if (bar_w < 1) bar_w = 1;
 
     for (int i = 0; i < (int)ctx->length; i++) {
         int val    = ctx->values[i];
@@ -72,13 +75,14 @@ static void draw_bars(const SortContext *ctx, int bar_top, int bar_bot, int cols
             filled = 1;
 
         int color = bar_color(ctx, i);
-        int x = i * bar_w;
+        int left = bar_edge(i, (int)ctx->length, cols);
+        int right = bar_edge(i + 1, (int)ctx->length, cols);
 
         for (int r = bar_top; r <= bar_bot; r++) {
             int dist_from_bottom = bar_bot - r + 1;
             int pair = (dist_from_bottom <= filled) ? COLOR_PAIR(color) : 0;
-            for (int w = 0; w < bar_w && x + w < cols; w++)
-                mvaddch(r, x + w, ' ' | pair);
+            for (int x = left; x < right; x++)
+                mvaddch(r, x, ' ' | pair);
         }
     }
 }
@@ -134,19 +138,20 @@ static void draw_controls(const SortContext *ctx, int row, int cols)
 }
 
 static void draw_one_bar_green(int index, int val, int length, int bar_top,
-                               int bar_bot, int bar_w, int cols)
+                               int bar_bot, int cols)
 {
     int bar_h  = bar_bot - bar_top + 1;
     int filled = val * bar_h / length;
     if (filled == 0 && val > 0)
         filled = 1;
 
-    int x = index * bar_w;
+    int left = bar_edge(index, length, cols);
+    int right = bar_edge(index + 1, length, cols);
     for (int r = bar_top; r <= bar_bot; r++) {
         int dist_from_bottom = bar_bot - r + 1;
         int pair = (dist_from_bottom <= filled) ? COLOR_PAIR(COLOR_PAIR_SORTED) : 0;
-        for (int w = 0; w < bar_w && x + w < cols; w++)
-            mvaddch(r, x + w, ' ' | pair);
+        for (int x = left; x < right; x++)
+            mvaddch(r, x, ' ' | pair);
     }
 }
 
@@ -163,15 +168,13 @@ void renderer_wave(const SortContext *ctx)
 
     int bar_top = 2;
     int bar_bot = rows - 6;
-    int bar_w   = cols / (int)ctx->length;
-    if (bar_w < 1) bar_w = 1;
 
     long delay_ns = 600000000L / (long)ctx->length;
     struct timespec ts = { .tv_sec = 0, .tv_nsec = delay_ns };
 
     for (size_t k = 0; k < ctx->length; k++) {
         draw_one_bar_green((int)k, ctx->values[k], (int)ctx->length,
-                           bar_top, bar_bot, bar_w, cols);
+                           bar_top, bar_bot, cols);
         refresh();
         nanosleep(&ts, NULL);
     }
