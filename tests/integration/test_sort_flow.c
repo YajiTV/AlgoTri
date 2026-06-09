@@ -12,6 +12,12 @@ static const SortFn ALGOS[] = {
     sort_selection,
     sort_insertion,
     sort_quick,
+    sort_merge,
+    sort_heap,
+    sort_shell,
+    sort_cocktail,
+    sort_comb,
+    sort_gnome,
 };
 
 #define ALGO_COUNT (sizeof(ALGOS) / sizeof(ALGOS[0]))

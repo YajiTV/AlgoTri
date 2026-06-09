@@ -17,6 +17,12 @@ static const AlgoEntry ALGOS[] = {
     {"Tri par sélection", sort_selection},
     {"Tri par insertion", sort_insertion},
     {"Tri rapide",        sort_quick},
+    {"Tri fusion",        sort_merge},
+    {"Tri par tas",       sort_heap},
+    {"Tri de Shell",      sort_shell},
+    {"Tri cocktail",      sort_cocktail},
+    {"Tri à peigne",      sort_comb},
+    {"Tri gnome",         sort_gnome},
 };
 
 #define ALGO_COUNT ((int)(sizeof(ALGOS) / sizeof(ALGOS[0])))

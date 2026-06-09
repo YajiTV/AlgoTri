@@ -10,7 +10,13 @@ static const SortFunction algorithms[] = {
     sort_bubble,
     sort_selection,
     sort_insertion,
-    sort_quick
+    sort_quick,
+    sort_merge,
+    sort_heap,
+    sort_shell,
+    sort_cocktail,
+    sort_comb,
+    sort_gnome
 };
 
 static bool interrupt_control(SortContext *ctx)
