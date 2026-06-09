@@ -1,35 +1,8 @@
-# Compiled binaries
-algotri
-*.out
-*.exe
-
-# Object files
-*.o
-*.obj
-
-# Static and shared libraries
-*.a
-*.so
-*.dylib
-
-# Dependency files
-*.d
-
-# Build directories
-build/
 bin/
-obj/
-
-# Editor files
+build/
+*.o
+*.out
+*.log
 .vscode/
 .idea/
-*.swp
-*.swo
-*~
-
-# macOS
-.DS_Store
-
-# Valgrind
-vgcore.*
-CLAUDE.md
+compile_commands.json
