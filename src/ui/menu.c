@@ -211,6 +211,7 @@ void menu_run(SortContext *ctx)
             default:
                 break;
         }
+        napms(16);
     }
 
     renderer_cleanup();
