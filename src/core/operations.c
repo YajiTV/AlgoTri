@@ -4,15 +4,27 @@
 
 int ops_compare(SortContext *ctx, size_t i, size_t j)
 {
+    if (!ctx || !ctx->values || i >= ctx->length || j >= ctx->length)
+        return 0;
+
     ctx->comparisons++;
     ctx->compared_index = (int)j;
     ctx->active_index   = (int)i;
-    return ctx->values[i] - ctx->values[j];
+    if (ctx->values[i] < ctx->values[j])
+        return -1;
+    if (ctx->values[i] > ctx->values[j])
+        return 1;
+    return 0;
 }
 
 void ops_swap(SortContext *ctx, size_t i, size_t j)
 {
+    if (!ctx || !ctx->values || i >= ctx->length || j >= ctx->length || i == j)
+        return;
+
     ctx->swaps++;
+    ctx->active_index   = (int)i;
+    ctx->compared_index = (int)j;
     int tmp         = ctx->values[i];
     ctx->values[i]  = ctx->values[j];
     ctx->values[j]  = tmp;
@@ -20,6 +32,9 @@ void ops_swap(SortContext *ctx, size_t i, size_t j)
 
 void ops_render_step(SortContext *ctx)
 {
+    if (!ctx || ctx->delay_ms == 0)
+        return;
+
     struct timespec ts = {
         .tv_sec  = ctx->delay_ms / 1000,
         .tv_nsec = (long)(ctx->delay_ms % 1000) * 1000000L

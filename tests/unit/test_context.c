@@ -45,11 +45,27 @@ static void test_reset_stats(void)
     context_destroy(ctx);
 }
 
+static void test_set_values(void)
+{
+    const int values[] = {9, -2, 9, 4};
+    SortContext *ctx = context_create(2);
+    ASSERT(ctx != NULL);
+    ASSERT(context_set_values(ctx, values, 4));
+    ASSERT(ctx->length == 4);
+    for (size_t i = 0; i < ctx->length; i++)
+        ASSERT(ctx->values[i] == values[i]);
+    ASSERT(!context_set_values(ctx, NULL, 4));
+    ASSERT(!context_set_values(NULL, values, 4));
+    ASSERT(!context_set_values(ctx, values, 0));
+    context_destroy(ctx);
+}
+
 int main(void)
 {
     test_create_valid();
     test_create_zero();
     test_randomize_bounds();
     test_reset_stats();
+    test_set_values();
     TEST_SUMMARY();
 }

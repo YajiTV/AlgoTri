@@ -19,5 +19,6 @@ SortContext *context_create(size_t length);
 void         context_destroy(SortContext *ctx);
 void         context_randomize(SortContext *ctx);
 void         context_reset_stats(SortContext *ctx);
+bool         context_set_values(SortContext *ctx, const int *values, size_t length);
 
 #endif
