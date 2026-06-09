@@ -61,6 +61,26 @@ static void draw_menu_item(int row, int cols, bool selected, const char *label,
         attroff(A_REVERSE);
 }
 
+static void draw_action_button(int row, int cols, bool selected, const char *label)
+{
+    int width = 38;
+    int x = (cols - width) / 2;
+    int label_x = x + (width - (int)strlen(label)) / 2;
+
+    if (x < 0)
+        x = 0;
+    if (label_x < 0)
+        label_x = 0;
+
+    if (selected) {
+        attron(A_REVERSE);
+        mvhline(row, x, ' ', width);
+    }
+    mvprintw(row, label_x, "%s", label);
+    if (selected)
+        attroff(A_REVERSE);
+}
+
 static int centered_x(int cols, const char *text)
 {
     int x = (cols - (int)strlen(text)) / 2;
@@ -93,7 +113,7 @@ static void draw_main_menu(const MenuState *state, int rows, int cols)
     draw_menu_item(9, cols, state->selected_item == 1, "Taille", size_label);
     draw_menu_item(11, cols, state->selected_item == 2, "Vitesse",
                    SPEEDS[state->speed_index].label);
-    draw_menu_item(14, cols, state->selected_item == 3, "", "Lancer le tri");
+    draw_action_button(14, cols, state->selected_item == 3, "Lancer le tri");
 
     const char *hint = "Flèches : choisir   Entrée : valider   Q : quitter";
     mvprintw(rows - 2, centered_x(cols, hint), "%s", hint);
