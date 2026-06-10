@@ -26,18 +26,18 @@ allocation dynamique, séparation en modules et gestion de la mémoire.
 
 ## Algorithmes disponibles
 
-| Algorithme | Principe général |
-| --- | --- |
-| Tri à bulles | Échange les valeurs voisines mal ordonnées |
-| Tri par sélection | Sélectionne successivement la plus petite valeur |
-| Tri par insertion | Insère chaque valeur dans la partie déjà triée |
-| Tri rapide | Partitionne le tableau autour d'un pivot |
-| Tri fusion | Divise puis fusionne des sous-tableaux triés |
-| Tri par tas | Utilise une structure de tas pour extraire les valeurs |
-| Tri de Shell | Effectue des insertions avec des écarts décroissants |
-| Tri cocktail | Parcourt alternativement le tableau dans les deux sens |
-| Tri à peigne | Compare des valeurs séparées par un écart décroissant |
-| Tri gnome | Déplace les valeurs par échanges successifs |
+| Algorithme        | Principe général                                       |
+| ----------------- | ------------------------------------------------------ |
+| Tri à bulles      | Échange les valeurs voisines mal ordonnées             |
+| Tri par sélection | Sélectionne successivement la plus petite valeur       |
+| Tri par insertion | Insère chaque valeur dans la partie déjà triée         |
+| Tri rapide        | Partitionne le tableau autour d'un pivot               |
+| Tri fusion        | Divise puis fusionne des sous-tableaux triés           |
+| Tri par tas       | Utilise une structure de tas pour extraire les valeurs |
+| Tri de Shell      | Effectue des insertions avec des écarts décroissants   |
+| Tri cocktail      | Parcourt alternativement le tableau dans les deux sens |
+| Tri à peigne      | Compare des valeurs séparées par un écart décroissant  |
+| Tri gnome         | Déplace les valeurs par échanges successifs            |
 
 ## Prérequis
 
@@ -90,15 +90,6 @@ Installer Git, Make, GCC, `pkg-config` et ncurses :
 pacman -S --needed git make mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-pkgconf mingw-w64-ucrt-x86_64-ncurses
 ```
 
-Cloner, compiler et lancer AlgoTri depuis le même terminal :
-
-```bash
-git clone https://github.com/YajiTV/AlgoTri.git
-cd AlgoTri
-make
-make run
-```
-
 ## Installation et lancement
 
 Cloner le dépôt, entrer dans son dossier, puis compiler et lancer le programme :
@@ -121,42 +112,42 @@ lancé directement :
 
 ### Dans le menu
 
-| Touche | Action |
-| --- | --- |
-| `↑` / `↓` | Sélectionner une option |
-| `←` / `→` | Modifier la valeur sélectionnée |
-| `Entrée` | Valider ou passer à l'option suivante |
-| `Q` | Quitter le programme |
+| Touche    | Action                                |
+| --------- | ------------------------------------- |
+| `↑` / `↓` | Sélectionner une option               |
+| `←` / `→` | Modifier la valeur sélectionnée       |
+| `Entrée`  | Valider ou passer à l'option suivante |
+| `Q`       | Quitter le programme                  |
 
 ### Pendant un tri
 
-| Touche | Action |
-| --- | --- |
-| `Espace` ou `P` | Mettre en pause ou reprendre |
-| `N`, `→` ou `Entrée` | Avancer d'une étape pendant la pause |
-| `Q` | Interrompre le tri et revenir au menu |
-| `R` | Relancer le tri avec un nouveau tableau une fois terminé |
-| `Entrée` | Revenir au menu une fois le tri terminé |
+| Touche               | Action                                                   |
+| -------------------- | -------------------------------------------------------- |
+| `Espace` ou `P`      | Mettre en pause ou reprendre                             |
+| `N`, `→` ou `Entrée` | Avancer d'une étape pendant la pause                     |
+| `Q`                  | Interrompre le tri et revenir au menu                    |
+| `R`                  | Relancer le tri avec un nouveau tableau une fois terminé |
+| `Entrée`             | Revenir au menu une fois le tri terminé                  |
 
 ## Couleurs
 
-| Couleur | Signification |
-| --- | --- |
-| Blanc | Valeur dans son état normal |
-| Jaune | Valeur comparée |
-| Rouge | Valeur impliquée dans un échange |
-| Vert | Valeur triée lors de l'animation finale |
-| Cyan | Titres et séparateurs |
+| Couleur | Signification                           |
+| ------- | --------------------------------------- |
+| Blanc   | Valeur dans son état normal             |
+| Jaune   | Valeur comparée                         |
+| Rouge   | Valeur impliquée dans un échange        |
+| Vert    | Valeur triée lors de l'animation finale |
+| Cyan    | Titres et séparateurs                   |
 
 ## Commandes Make
 
-| Commande | Description |
-| --- | --- |
-| `make` | Compiler le projet |
-| `make run` | Compiler si nécessaire puis lancer AlgoTri |
-| `make clean` | Supprimer les fichiers objets |
-| `make fclean` | Supprimer les fichiers objets et l'exécutable |
-| `make re` | Nettoyer puis recompiler entièrement le projet |
+| Commande      | Description                                    |
+| ------------- | ---------------------------------------------- |
+| `make`        | Compiler le projet                             |
+| `make run`    | Compiler si nécessaire puis lancer AlgoTri     |
+| `make clean`  | Supprimer les fichiers objets                  |
+| `make fclean` | Supprimer les fichiers objets et l'exécutable  |
+| `make re`     | Nettoyer puis recompiler entièrement le projet |
 
 La compilation utilise les options strictes suivantes :
 
