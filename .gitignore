@@ -1,0 +1,10 @@
+build/
+*.o
+*.out
+*.log
+.vscode/
+.idea/
+compile_commands.json
+
+CLAUDE.md
+.claude/

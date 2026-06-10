@@ -1,0 +1,41 @@
+#ifndef CONTEXT_H
+#define CONTEXT_H
+
+#include <stddef.h>
+#include <stdbool.h>
+
+typedef struct SortContext SortContext;
+
+typedef void (*RenderFn)(const SortContext *ctx);
+typedef bool (*ControlFn)(SortContext *ctx);
+
+typedef enum {
+    OPERATION_NONE,
+    OPERATION_COMPARE,
+    OPERATION_SWAP
+} OperationKind;
+
+struct SortContext {
+    int          *values;
+    size_t        length;
+    size_t        comparisons;
+    size_t        swaps;
+    int           active_index;
+    int           compared_index;
+    OperationKind operation;
+    unsigned int  delay_ms;
+    bool          paused;
+    bool          interrupted;
+    RenderFn      render_fn;
+    ControlFn     control_fn;
+    const char   *algo_name;
+};
+
+SortContext *context_create(size_t length);
+void         context_destroy(SortContext *ctx);
+void         context_randomize(SortContext *ctx);
+void         context_reset_stats(SortContext *ctx);
+bool         context_set_values(SortContext *ctx, const int *values, size_t length);
+bool         context_resize(SortContext *ctx, size_t length);
+
+#endif
